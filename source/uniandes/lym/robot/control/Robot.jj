@@ -111,9 +111,9 @@ TOKEN :
 	{
 		(
 		  
-		   <LPAREN> <MOVE> move() <RPAREN> 
-		|  <LPAREN> <PUT> put() <RPAREN> 					  			
-		|  <LPAREN> <PICK> pick() <RPAREN> 
+		   <LPAREN> move() <RPAREN> 
+		|  <LPAREN> <PUT> putItem() <RPAREN> 					  			
+		|  <LPAREN> <PICK> pickItem() <RPAREN> 
 		) "\n" 
 
 		{
@@ -132,7 +132,7 @@ TOKEN :
 		| <EOF> {return false;} 
 	}
 
-	void put() :
+	void putItem() :
 	{
 		int f=1;	
 	}
@@ -142,7 +142,7 @@ TOKEN :
 
 	}
 
-	void pick() :
+	void pickItem() :
 	{
 		int f=1;	
 	}
@@ -157,7 +157,7 @@ TOKEN :
       int x=1;
     }
     {
-      ( x=numero() {world.moveForward(x);salida = "Command: Moveforward ";})
+      (<MOVE>  x=numero() {world.moveForward(x);salida = "Command: Moveforward ";})
     }
 	
 	
