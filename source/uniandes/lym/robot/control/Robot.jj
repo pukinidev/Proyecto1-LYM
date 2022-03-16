@@ -20,9 +20,10 @@ Abril: 2008 - Simplificado apra solo interpretaci�n
 
 options 
 {
-	LOOKAHEAD=1; 
-	IGNORE_CASE=true;
+	LOOKAHEAD=2; 
+	IGNORE_CASE=true; 
 	STATIC = false;
+	FORCE_LA_CHECK = true; /* Toca setear esto en true porque sino el LOOKAHEAD = 2 manda warning */
 	
 }
    
@@ -61,22 +62,33 @@ SKIP:
 //	| "\n"
 }
 
-TOKEN: /* Nombres de Comandos */
+TOKEN: /* SEPARATORS */
+{
+	  <LPAREN: "(" >
+	 |<RPAREN: ")" >
+	 
+}
+
+TOKEN: /* COMMANDS */
 {
 
 			<MOVE:  "move">
-		| 	<TURN: "turn">
-		| 	<T_PONER: "Put">
-		| 	<T_RECOGER: "Pick">
-		|  < T_POP: "Pop" >
+		| 	<PUT: "put">
+		| 	<PICK: "pick">
+		|   <TURN: "turn" >
+		|   <FACE: "face" >
+		|   <MOVE_DIR: "move_dir">
+		|   <RUN_DIRS: "run_dirs">
+		|   <MOVE_FACE: "move_face" >
+		|   <SK: "skip" >
 		
-
 }
+
 
 TOKEN :
 {
-		<T_BALLOONS:  "BALLOONS" >
-		|	<T_CHIPS:     "CHIPS"  >	
+		<BALLOONS:  ":balloons" >
+		|<CHIPS:     ":chips"  >	
 
 }
 
@@ -98,11 +110,10 @@ TOKEN :
 	
 	{
 		(
-		   <TURN> "(" ")" {world.turnRight();salida = "Command: Turnright";}
-		|  <MOVE>  "(" x=numero() ")" {world.moveForward(x);salida = "Command: Moveforward ";}  
-		|  <T_PONER> "("  objetoPoner() ")"					  			
-		|  <T_RECOGER> "("  objetoRecoger()  ")"	
-	    |  < T_POP > "(" x=numero() ")" {world.popBalloons(x); salida = "Comando:  Pop";}
+		  
+		   <LPAREN> <MOVE> move() <RPAREN> 
+		|  <LPAREN> <PUT> put() <RPAREN> 					  			
+		|  <LPAREN> <PICK> pick() <RPAREN> 
 		) "\n" 
 
 		{
@@ -121,26 +132,33 @@ TOKEN :
 		| <EOF> {return false;} 
 	}
 
-	void objetoPoner() :
+	void put() :
 	{
 		int f=1;	
 	}
 	{
-		( <T_CHIPS>    "," f=numero() {world.putChips(f); salida = "Command:  Put Chips"; })
-		|  	  ( <T_BALLOONS>   "," f=numero() {world.putBalloons(f); salida = "Command:  Put Balloons";})	 
+		( <CHIPS>   f=numero() {world.putChips(f); salida = "Command:  Put Chips"; })
+		|  	  ( <BALLOONS>   f=numero() {world.putBalloons(f); salida = "Command:  Put Balloons";})	 
 
 	}
 
-	void objetoRecoger() :
+	void pick() :
 	{
 		int f=1;	
 	}
 	{
-		( <T_CHIPS>   "," f=numero() {world.pickChips(f);salida = "Command:  Pick chips";})
-		|  	  ( <T_BALLOONS>   "," f=numero() {world.grabBalloons(f);salida="Command:  Pick balloons";})	 
+		( <CHIPS>    f=numero() {world.pickChips(f);salida = "Command:  Pick chips";})
+		|  	  ( <BALLOONS>    f=numero() {world.grabBalloons(f);salida="Command:  Pick balloons";})	 
 
 	}
 
+    void move():
+    {
+      int x=1;
+    }
+    {
+      ( x=numero() {world.moveForward(x);salida = "Command: Moveforward ";})
+    }
 	
 	
 
