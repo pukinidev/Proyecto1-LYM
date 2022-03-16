@@ -21,7 +21,6 @@ public class Robot implements RobotConstants {
         String salida=new String();
 
   final public boolean command(StringBuffer sistema) throws ParseException {
-                int x;
                 salida=new String();
     if (jj_2_4(2)) {
       if (jj_2_1(2)) {
@@ -42,7 +41,7 @@ public class Robot implements RobotConstants {
         jj_consume_token(-1);
         throw new ParseException();
       }
-      jj_consume_token(19);
+      jj_consume_token(28);
                   //  try {
                 //		 Thread.sleep(1);
                   //   } catch (InterruptedException e) {
@@ -52,7 +51,7 @@ public class Robot implements RobotConstants {
                         sistema.append(salida);
                         {if (true) return true;}
     } else if (jj_2_5(2)) {
-      jj_consume_token(19);
+      jj_consume_token(28);
                {if (true) return true;}
     } else if (jj_2_6(2)) {
       jj_consume_token(0);
@@ -194,6 +193,22 @@ public class Robot implements RobotConstants {
     finally { jj_save(9, xla); }
   }
 
+  private boolean jj_3R_1() {
+    if (jj_scan_token(MOVE)) return true;
+    return false;
+  }
+
+  private boolean jj_3_9() {
+    if (jj_scan_token(CHIPS)) return true;
+    if (jj_3R_2()) return true;
+    return false;
+  }
+
+  private boolean jj_3_5() {
+    if (jj_scan_token(28)) return true;
+    return false;
+  }
+
   private boolean jj_3_3() {
     if (jj_scan_token(LPAREN)) return true;
     if (jj_scan_token(PICK)) return true;
@@ -250,22 +265,6 @@ public class Robot implements RobotConstants {
   private boolean jj_3_8() {
     if (jj_scan_token(BALLOONS)) return true;
     if (jj_3R_2()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_1() {
-    if (jj_scan_token(MOVE)) return true;
-    return false;
-  }
-
-  private boolean jj_3_9() {
-    if (jj_scan_token(CHIPS)) return true;
-    if (jj_3R_2()) return true;
-    return false;
-  }
-
-  private boolean jj_3_5() {
-    if (jj_scan_token(19)) return true;
     return false;
   }
 
@@ -472,7 +471,7 @@ public class Robot implements RobotConstants {
   /** Generate ParseException. */
   public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[20];
+    boolean[] la1tokens = new boolean[29];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
@@ -486,7 +485,7 @@ public class Robot implements RobotConstants {
         }
       }
     }
-    for (int i = 0; i < 20; i++) {
+    for (int i = 0; i < 29; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

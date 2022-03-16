@@ -71,8 +71,8 @@ TOKEN: /* SEPARATORS */
 
 TOKEN: /* COMMANDS */
 {
-
-			<MOVE:  "move">
+			<DEFVAR: "defvar" >
+		|   <MOVE:  "move">
 		| 	<PUT: "put">
 		| 	<PICK: "pick">
 		|   <TURN: "turn" >
@@ -81,6 +81,24 @@ TOKEN: /* COMMANDS */
 		|   <RUN_DIRS: "run_dirs">
 		|   <MOVE_FACE: "move_face" >
 		|   <SK: "skip" >
+		
+}
+
+TOKEN: /* CONTROL STRUCTURES */
+{
+  		 <IF: "if">
+  	   | <LOOP: "loop">
+  	   | <REPEAT: "repeat">
+  	   | <DEFUN: "defun">     
+}
+
+TOKEN: /* CONDITIONALS */
+{
+		<FACING_P: "facing-p">
+       |<CPU: "can-put-p" >
+       |<CPI: "can-pick-p" >
+       |<CM: "can-move-p" >
+       |<NOT: "not" >
 		
 }
 
@@ -102,8 +120,6 @@ TOKEN :
 
 	boolean command(StringBuffer sistema) :
 	{	
-		
-		int x;
 		salida=new String();
 		
 	}
