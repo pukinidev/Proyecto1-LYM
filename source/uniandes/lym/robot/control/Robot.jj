@@ -66,18 +66,11 @@ TOKEN: /* Nombres de Comandos */
 
 			<MOVE:  "move">
 		| 	<TURN: "turn">
-		| 	<PUT: "put">
-		| 	<PICK: "pick">
+		| 	<T_PONER: "Put">
+		| 	<T_RECOGER: "Pick">
+		|  < T_POP: "Pop" >
 		
 
-}
-
-TOKEN: /* DIRECTIONS */
-{
-  
-		<LEFT: ":left" >
-		| <RIGHT: ":right" >
-		| <AROUND: ":around" >
 }
 
 TOKEN :
@@ -90,7 +83,7 @@ TOKEN :
 
 TOKEN :
 {
-		<NUMBER: (<DIGIT>)+ >
+		<NUMERO: (<DIGIT>)+ >
 		|  	<#DIGIT: ["0"-"9"] >
 }
 
@@ -105,10 +98,11 @@ TOKEN :
 	
 	{
 		(
-		   <TURN> "(" () {")" {world.turnRight();salida = "Command: Turnright";}
-		|  "(" <MOVE>   x=numero() ")" {world.moveForward(x);salida = "Command: Moveforward ";}  
-		|  "(" <PUT> "("  objetoPoner() ")"					  			
-		|  "(" <PICK>  objetoRecoger()  ")"	
+		   <TURN> "(" ")" {world.turnRight();salida = "Command: Turnright";}
+		|  <MOVE>  "(" x=numero() ")" {world.moveForward(x);salida = "Command: Moveforward ";}  
+		|  <T_PONER> "("  objetoPoner() ")"					  			
+		|  <T_RECOGER> "("  objetoRecoger()  ")"	
+	    |  < T_POP > "(" x=numero() ")" {world.popBalloons(x); salida = "Comando:  Pop";}
 		) "\n" 
 
 		{
@@ -147,15 +141,6 @@ TOKEN :
 
 	}
 
-	void D() :
-	{
-	}
-	
-	{
-	}
-	  
-	  
-
 	
 	
 
@@ -169,7 +154,7 @@ TOKEN :
 		int total=1;
 	}
 	{
-		<NUMBER>
+		<NUMERO>
 		{
 			try 
 			{

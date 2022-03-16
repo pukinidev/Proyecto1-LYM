@@ -11,9 +11,9 @@ public interface RobotConstants {
   /** End of File. */
   int EOF = 0;
   /** RegularExpression Id. */
-  int T_MOVER = 4;
+  int MOVE = 4;
   /** RegularExpression Id. */
-  int T_TURNRIGHT = 5;
+  int TURN = 5;
   /** RegularExpression Id. */
   int T_PONER = 6;
   /** RegularExpression Id. */
@@ -38,8 +38,8 @@ public interface RobotConstants {
     "\" \"",
     "\"\\r\"",
     "\"\\t\"",
-    "\"Move\"",
-    "\"TURNRIGHT\"",
+    "\"move\"",
+    "\"turn\"",
     "\"Put\"",
     "\"Pick\"",
     "\"Pop\"",

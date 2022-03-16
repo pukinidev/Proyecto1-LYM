@@ -24,24 +24,24 @@ public class Robot implements RobotConstants {
                 int x;
                 salida=new String();
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case T_MOVER:
-    case T_TURNRIGHT:
+    case MOVE:
+    case TURN:
     case T_PONER:
     case T_RECOGER:
     case T_POP:
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case T_TURNRIGHT:
-        jj_consume_token(T_TURNRIGHT);
+      case TURN:
+        jj_consume_token(TURN);
         jj_consume_token(13);
         jj_consume_token(14);
-                                          world.turnRight();salida = "Command: Turnright";
+                                   world.turnRight();salida = "Command: Turnright";
         break;
-      case T_MOVER:
-        jj_consume_token(T_MOVER);
+      case MOVE:
+        jj_consume_token(MOVE);
         jj_consume_token(13);
         x = numero();
         jj_consume_token(14);
-                                                       world.moveForward(x);salida = "Command: Moveforward ";
+                                               world.moveForward(x);salida = "Command: Moveforward ";
         break;
       case T_PONER:
         jj_consume_token(T_PONER);
