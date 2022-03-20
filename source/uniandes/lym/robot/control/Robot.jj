@@ -32,8 +32,7 @@ package uniandes.lym.robot.control;
 import uniandes.lym.robot.kernel.*;
 import java.awt.Point;
 import java.io.*;
-import java.util.Vector;
-import java.util.LinkedList;
+import java.util.*;
 @ SuppressWarnings("serial") 
 public class Robot
 {
@@ -97,16 +96,14 @@ TOKEN : /*CONSTANTS*/
 {
   < BALLOONS : ":balloons" >
 | < CHIPS : ":chips" >
-  /* DIRECTIONS */
-| < RIGHT: ":right" >
-| < LEFT:  ":left" >
-| < AROUND: ":around" >
 }
 
 TOKEN :
 {
   < NUMERO : (< DIGIT >)+ >
-| 	< #DIGIT : [ "0"-"9" ] >
+| < CONSTANT : ":" (< LETTER >)+ >
+| < #DIGIT : [ "0"-"9" ] >
+| < #LETTER : [ "a"-"z" ] >
 }
 
 boolean command(StringBuffer sistema) :
@@ -120,6 +117,7 @@ boolean command(StringBuffer sistema) :
   | < LPAREN > < PICK > pickItem() < RPAREN >
   | < LPAREN > turn() < RPAREN >
   | < LPAREN > face() < RPAREN >
+  | < LPAREN > parseConstant() < RPAREN >
   )
   "\n"
   {
@@ -197,61 +195,67 @@ void move() :
 
 void turn() :
 {
+  Map < String, Integer > directions = Map.of(
+  ":right", 1, 
+  ":around", 2, 
+  ":left", 3
+  );
+  String c;
 }
 {
-    < TURN >
-    (    <RIGHT> 
+  (
+    < TURN > c = constant()
     {
-      world.turnRight();
+      int giros = directions.get(c);
+      salida = "Numero de giros: " + giros;
+      for (int i = 1; i <= giros; i++)
+      {
+        world.turnRight();
+      }
     }
-  	|
-  	<LEFT>
-  	{
-  	  for(int i = 1; i<=3; i+=1)
-  	  {
-  	    	world.turnRight();
-  	  }
-    }
-  	|
-  	<AROUND >
-  	{
-  	  for(int i = 1; i<=2; i+=1)
-  	  {
-  	    	world.turnRight();
-  	  }
-    }
-  	)
+  )
 }
 
 void face() :
-{
-}
+{}
 {
   < FACE >
   {
     int directions = world.getFacing();
     String d = "";
-    switch(directions)
+    switch (directions)
     {
-      case 0:
-      	d = "North";
-      	break;
-      case 1:
-      	d = "South";
-      	break;
-      case 2:
-      	d = "East";
-      	break;
-      case 3:
-      	d = "West";
-      	break;
+      case 0 : 
+      d = "North";
+      break;
+      case 1 : 
+      d = "South";
+      break;
+      case 2 : 
+      d = "East";
+      break;
+      case 3 : 
+      d = "West";
+      break;
     }
     salida = "The robot direction is: " + d;
     /* Estaba mirando si obtener el facing estaba funcionando y en efecto funciona! */
-    
+
   }
 }
 
+void parseConstant() :
+{
+  String text;
+}
+{
+  (
+    < DEFVAR > text = constant()
+    {
+      salida = "constante: " + text;
+    }
+  )
+}
 
 /**
 	 *  reconoce un numero entero sin signo
@@ -276,5 +280,22 @@ int numero() throws Error :
       throw new Error("Number out of bounds: " + token.image + "!!");
     }
     return total;
+  }
+}
+
+/**
+	 * reconoce una constante
+	 * @return el valor string correspondiente al valor reconocido
+	 */
+
+
+String constant() throws Error :
+{
+  Token token;
+}
+{
+  (token = < CONSTANT >)+
+  {
+    return token.image;
   }
 }

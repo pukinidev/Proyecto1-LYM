@@ -57,15 +57,13 @@ public interface RobotConstants {
   /** RegularExpression Id. */
   int CHIPS = 26;
   /** RegularExpression Id. */
-  int RIGHT = 27;
+  int NUMERO = 27;
   /** RegularExpression Id. */
-  int LEFT = 28;
+  int CONSTANT = 28;
   /** RegularExpression Id. */
-  int AROUND = 29;
+  int DIGIT = 29;
   /** RegularExpression Id. */
-  int NUMERO = 30;
-  /** RegularExpression Id. */
-  int DIGIT = 31;
+  int LETTER = 30;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -99,11 +97,10 @@ public interface RobotConstants {
     "\"not\"",
     "\":balloons\"",
     "\":chips\"",
-    "\":right\"",
-    "\":left\"",
-    "\":around\"",
     "<NUMERO>",
+    "<CONSTANT>",
     "<DIGIT>",
+    "<LETTER>",
     "\"\\n\"",
   };
 

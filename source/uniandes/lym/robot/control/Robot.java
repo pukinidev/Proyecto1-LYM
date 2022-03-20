@@ -3,8 +3,7 @@ package uniandes.lym.robot.control;
 import uniandes.lym.robot.kernel.*;
 import java.awt.Point;
 import java.io.*;
-import java.util.Vector;
-import java.util.LinkedList;
+import java.util.*;
 @ SuppressWarnings("serial")
 public class Robot implements RobotConstants {
   private RobotWorldDec world;
@@ -17,7 +16,7 @@ public class Robot implements RobotConstants {
 
   final public boolean command(StringBuffer sistema) throws ParseException {
   salida = new String();
-    if (jj_2_6(2)) {
+    if (jj_2_7(2)) {
       if (jj_2_1(2)) {
         jj_consume_token(LPAREN);
         move();
@@ -40,11 +39,15 @@ public class Robot implements RobotConstants {
         jj_consume_token(LPAREN);
         face();
         jj_consume_token(RPAREN);
+      } else if (jj_2_6(2)) {
+        jj_consume_token(LPAREN);
+        parseConstant();
+        jj_consume_token(RPAREN);
       } else {
         jj_consume_token(-1);
         throw new ParseException();
       }
-      jj_consume_token(32);
+      jj_consume_token(31);
     //  try {
     //		 Thread.sleep(1);
     //   } catch (InterruptedException e) {
@@ -52,10 +55,10 @@ public class Robot implements RobotConstants {
     //	    }
     sistema.append(salida);
     {if (true) return true;}
-    } else if (jj_2_7(2)) {
-      jj_consume_token(32);
-    {if (true) return true;}
     } else if (jj_2_8(2)) {
+      jj_consume_token(31);
+    {if (true) return true;}
+    } else if (jj_2_9(2)) {
       jj_consume_token(0);
     {if (true) return false;}
     } else {
@@ -67,11 +70,11 @@ public class Robot implements RobotConstants {
 
   final public void putItem() throws ParseException {
   int f = 1;
-    if (jj_2_9(2)) {
+    if (jj_2_10(2)) {
       jj_consume_token(CHIPS);
       f = numero();
       world.putChips(f);
-    } else if (jj_2_10(2)) {
+    } else if (jj_2_11(2)) {
       jj_consume_token(BALLOONS);
       f = numero();
       world.putBalloons(f);
@@ -83,11 +86,11 @@ public class Robot implements RobotConstants {
 
   final public void pickItem() throws ParseException {
   int f = 1;
-    if (jj_2_11(2)) {
+    if (jj_2_12(2)) {
       jj_consume_token(CHIPS);
       f = numero();
       world.pickChips(f);
-    } else if (jj_2_12(2)) {
+    } else if (jj_2_13(2)) {
       jj_consume_token(BALLOONS);
       f = numero();
       world.grabBalloons(f);
@@ -106,50 +109,51 @@ public class Robot implements RobotConstants {
   }
 
   final public void turn() throws ParseException {
+  Map < String, Integer > directions = Map.of(
+  ":right", 1,
+  ":around", 2,
+  ":left", 3
+  );
+  String c;
     jj_consume_token(TURN);
-    if (jj_2_13(2)) {
-      jj_consume_token(RIGHT);
-      world.turnRight();
-    } else if (jj_2_14(2)) {
-      jj_consume_token(LEFT);
-          for(int i = 1; i<=3; i+=1)
-          {
-                world.turnRight();
-          }
-    } else if (jj_2_15(2)) {
-      jj_consume_token(AROUND);
-          for(int i = 1; i<=2; i+=1)
-          {
-                world.turnRight();
-          }
-    } else {
-      jj_consume_token(-1);
-      throw new ParseException();
-    }
+    c = constant();
+      int giros = directions.get(c);
+      salida = "Numero de giros: " + giros;
+      for (int i = 1; i <= giros; i++)
+      {
+        world.turnRight();
+      }
   }
 
   final public void face() throws ParseException {
     jj_consume_token(FACE);
     int directions = world.getFacing();
     String d = "";
-    switch(directions)
+    switch (directions)
     {
-      case 0:
-        d = "North";
-        break;
-      case 1:
-        d = "South";
-        break;
-      case 2:
-        d = "East";
-        break;
-      case 3:
-        d = "West";
-        break;
+      case 0 :
+      d = "North";
+      break;
+      case 1 :
+      d = "South";
+      break;
+      case 2 :
+      d = "East";
+      break;
+      case 3 :
+      d = "West";
+      break;
     }
     salida = "The robot direction is: " + d;
     /* Estaba mirando si obtener el facing estaba funcionando y en efecto funciona! */
 
+  }
+
+  final public void parseConstant() throws ParseException {
+  String text;
+    jj_consume_token(DEFVAR);
+    text = constant();
+      salida = "constante: " + text;
   }
 
 /**
@@ -170,6 +174,25 @@ public class Robot implements RobotConstants {
       {if (true) throw new Error("Number out of bounds: " + token.image + "!!");}
     }
     {if (true) return total;}
+    throw new Error("Missing return statement in function");
+  }
+
+/**
+	 * reconoce una constante
+	 * @return el valor string correspondiente al valor reconocido
+	 */
+  final public String constant() throws ParseException, Error {
+  Token token;
+    label_1:
+    while (true) {
+      token = jj_consume_token(CONSTANT);
+      if (jj_2_14(2)) {
+        ;
+      } else {
+        break label_1;
+      }
+    }
+    {if (true) return token.image;}
     throw new Error("Missing return statement in function");
   }
 
@@ -271,48 +294,53 @@ public class Robot implements RobotConstants {
     finally { jj_save(13, xla); }
   }
 
-  private boolean jj_2_15(int xla) {
-    jj_la = xla; jj_lastpos = jj_scanpos = token;
-    try { return !jj_3_15(); }
-    catch(LookaheadSuccess ls) { return true; }
-    finally { jj_save(14, xla); }
-  }
-
-  private boolean jj_3R_3() {
-    if (jj_scan_token(FACE)) return true;
+  private boolean jj_3_9() {
+    if (jj_scan_token(0)) return true;
     return false;
   }
 
-  private boolean jj_3_7() {
-    if (jj_scan_token(32)) return true;
+  private boolean jj_3_8() {
+    if (jj_scan_token(31)) return true;
     return false;
   }
 
-  private boolean jj_3_12() {
-    if (jj_scan_token(BALLOONS)) return true;
-    if (jj_3R_4()) return true;
-    return false;
-  }
-
-  private boolean jj_3_15() {
-    if (jj_scan_token(AROUND)) return true;
+  private boolean jj_3R_6() {
+    if (jj_scan_token(NUMERO)) return true;
     return false;
   }
 
   private boolean jj_3R_4() {
-    if (jj_scan_token(NUMERO)) return true;
+    if (jj_scan_token(FACE)) return true;
+    return false;
+  }
+
+  private boolean jj_3_13() {
+    if (jj_scan_token(BALLOONS)) return true;
+    if (jj_3R_6()) return true;
+    return false;
+  }
+
+  private boolean jj_3_6() {
+    if (jj_scan_token(LPAREN)) return true;
+    if (jj_3R_5()) return true;
     return false;
   }
 
   private boolean jj_3_5() {
     if (jj_scan_token(LPAREN)) return true;
-    if (jj_3R_3()) return true;
+    if (jj_3R_4()) return true;
     return false;
   }
 
   private boolean jj_3_4() {
     if (jj_scan_token(LPAREN)) return true;
-    if (jj_3R_2()) return true;
+    if (jj_3R_3()) return true;
+    return false;
+  }
+
+  private boolean jj_3_12() {
+    if (jj_scan_token(CHIPS)) return true;
+    if (jj_3R_6()) return true;
     return false;
   }
 
@@ -322,30 +350,19 @@ public class Robot implements RobotConstants {
     return false;
   }
 
-  private boolean jj_3_11() {
-    if (jj_scan_token(CHIPS)) return true;
-    if (jj_3R_4()) return true;
-    return false;
-  }
-
   private boolean jj_3_2() {
     if (jj_scan_token(LPAREN)) return true;
     if (jj_scan_token(PUT)) return true;
     return false;
   }
 
-  private boolean jj_3_14() {
-    if (jj_scan_token(LEFT)) return true;
-    return false;
-  }
-
   private boolean jj_3_1() {
     if (jj_scan_token(LPAREN)) return true;
-    if (jj_3R_1()) return true;
+    if (jj_3R_2()) return true;
     return false;
   }
 
-  private boolean jj_3_6() {
+  private boolean jj_3_7() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3_1()) {
@@ -356,7 +373,10 @@ public class Robot implements RobotConstants {
     jj_scanpos = xsp;
     if (jj_3_4()) {
     jj_scanpos = xsp;
-    if (jj_3_5()) return true;
+    if (jj_3_5()) {
+    jj_scanpos = xsp;
+    if (jj_3_6()) return true;
+    }
     }
     }
     }
@@ -364,35 +384,35 @@ public class Robot implements RobotConstants {
     return false;
   }
 
-  private boolean jj_3_13() {
-    if (jj_scan_token(RIGHT)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_2() {
+  private boolean jj_3R_3() {
     if (jj_scan_token(TURN)) return true;
     return false;
   }
 
-  private boolean jj_3_10() {
+  private boolean jj_3R_5() {
+    if (jj_scan_token(DEFVAR)) return true;
+    return false;
+  }
+
+  private boolean jj_3_14() {
+    if (jj_scan_token(CONSTANT)) return true;
+    return false;
+  }
+
+  private boolean jj_3_11() {
     if (jj_scan_token(BALLOONS)) return true;
-    if (jj_3R_4()) return true;
+    if (jj_3R_6()) return true;
     return false;
   }
 
-  private boolean jj_3_9() {
+  private boolean jj_3_10() {
     if (jj_scan_token(CHIPS)) return true;
-    if (jj_3R_4()) return true;
+    if (jj_3R_6()) return true;
     return false;
   }
 
-  private boolean jj_3R_1() {
+  private boolean jj_3R_2() {
     if (jj_scan_token(MOVE)) return true;
-    return false;
-  }
-
-  private boolean jj_3_8() {
-    if (jj_scan_token(0)) return true;
     return false;
   }
 
@@ -409,18 +429,13 @@ public class Robot implements RobotConstants {
   private int jj_gen;
   final private int[] jj_la1 = new int[0];
   static private int[] jj_la1_0;
-  static private int[] jj_la1_1;
   static {
       jj_la1_init_0();
-      jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
       jj_la1_0 = new int[] {};
    }
-   private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {};
-   }
-  final private JJCalls[] jj_2_rtns = new JJCalls[15];
+  final private JJCalls[] jj_2_rtns = new JJCalls[14];
   private boolean jj_rescan = false;
   private int jj_gc = 0;
 
@@ -604,7 +619,7 @@ public class Robot implements RobotConstants {
   /** Generate ParseException. */
   public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[33];
+    boolean[] la1tokens = new boolean[32];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
@@ -615,13 +630,10 @@ public class Robot implements RobotConstants {
           if ((jj_la1_0[i] & (1<<j)) != 0) {
             la1tokens[j] = true;
           }
-          if ((jj_la1_1[i] & (1<<j)) != 0) {
-            la1tokens[32+j] = true;
-          }
         }
       }
     }
-    for (int i = 0; i < 33; i++) {
+    for (int i = 0; i < 32; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;
@@ -648,7 +660,7 @@ public class Robot implements RobotConstants {
 
   private void jj_rescan_token() {
     jj_rescan = true;
-    for (int i = 0; i < 15; i++) {
+    for (int i = 0; i < 14; i++) {
     try {
       JJCalls p = jj_2_rtns[i];
       do {
@@ -669,7 +681,6 @@ public class Robot implements RobotConstants {
             case 11: jj_3_12(); break;
             case 12: jj_3_13(); break;
             case 13: jj_3_14(); break;
-            case 14: jj_3_15(); break;
           }
         }
         p = p.next;
