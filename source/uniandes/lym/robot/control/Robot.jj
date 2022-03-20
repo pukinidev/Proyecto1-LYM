@@ -119,6 +119,7 @@ boolean command(StringBuffer sistema) :
   | < LPAREN > < PUT > putItem() < RPAREN >								
   | < LPAREN > < PICK > pickItem() < RPAREN >
   | < LPAREN > turn() < RPAREN >
+  | < LPAREN > face() < RPAREN >
   )
   "\n"
   {
@@ -219,9 +220,38 @@ void turn() :
   	    	world.turnRight();
   	  }
     }
-  	
   	)
 }
+
+void face() :
+{
+}
+{
+  < FACE >
+  {
+    int directions = world.getFacing();
+    String d = "";
+    switch(directions)
+    {
+      case 0:
+      	d = "North";
+      	break;
+      case 1:
+      	d = "South";
+      	break;
+      case 2:
+      	d = "East";
+      	break;
+      case 3:
+      	d = "West";
+      	break;
+    }
+    salida = "The robot direction is: " + d;
+    /* Estaba mirando si obtener el facing estaba funcionando y en efecto funciona! */
+    
+  }
+}
+
 
 /**
 	 *  reconoce un numero entero sin signo
