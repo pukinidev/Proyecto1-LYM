@@ -206,11 +206,18 @@ void turn() :
   (
     < TURN > c = constant()
     {
-      int giros = directions.get(c);
-      salida = "Numero de giros: " + giros;
-      for (int i = 1; i <= giros; i++)
+      if (directions.containsKey(c))
       {
-        world.turnRight();
+        int giros = directions.get(c);
+        for (int i = 1; i <= giros; i++)
+        {
+          world.turnRight();
+        }
+        salida = "The robot has turned " + c;
+      }
+      else
+      {
+        salida = "The direction doesn't exist";
       }
     }
   )
