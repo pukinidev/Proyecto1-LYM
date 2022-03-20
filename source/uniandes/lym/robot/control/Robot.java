@@ -112,7 +112,7 @@ public class Robot implements RobotConstants {
   Map < String, Integer > directions = Map.of(
   ":right", 1,
   ":around", 2,
-  ":left", 3
+  ":left",-1
   );
   String c;
     jj_consume_token(TURN);
@@ -120,7 +120,17 @@ public class Robot implements RobotConstants {
       if (directions.containsKey(c))
       {
         int giros = directions.get(c);
-        for (int i = 1; i <= giros; i++)
+        int giro = 1;
+        if (giros < 0)
+        {
+          giro = Math.floorMod(giros, 4);
+        }
+        else if (giros > 1 )
+        {
+          giro = giros;
+        }
+        System.out.println(giro);
+        for (int i = 1; i <= giro; i++)
         {
           world.turnRight();
         }
@@ -301,18 +311,8 @@ public class Robot implements RobotConstants {
     finally { jj_save(13, xla); }
   }
 
-  private boolean jj_3R_6() {
-    if (jj_scan_token(NUMERO)) return true;
-    return false;
-  }
-
   private boolean jj_3_9() {
     if (jj_scan_token(0)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_4() {
-    if (jj_scan_token(FACE)) return true;
     return false;
   }
 
@@ -321,9 +321,19 @@ public class Robot implements RobotConstants {
     return false;
   }
 
+  private boolean jj_3R_5() {
+    if (jj_scan_token(DEFVAR)) return true;
+    return false;
+  }
+
   private boolean jj_3_13() {
     if (jj_scan_token(BALLOONS)) return true;
     if (jj_3R_6()) return true;
+    return false;
+  }
+
+  private boolean jj_3_14() {
+    if (jj_scan_token(CONSTANT)) return true;
     return false;
   }
 
@@ -357,11 +367,6 @@ public class Robot implements RobotConstants {
     return false;
   }
 
-  private boolean jj_3R_5() {
-    if (jj_scan_token(DEFVAR)) return true;
-    return false;
-  }
-
   private boolean jj_3_2() {
     if (jj_scan_token(LPAREN)) return true;
     if (jj_scan_token(PUT)) return true;
@@ -371,11 +376,6 @@ public class Robot implements RobotConstants {
   private boolean jj_3_1() {
     if (jj_scan_token(LPAREN)) return true;
     if (jj_3R_2()) return true;
-    return false;
-  }
-
-  private boolean jj_3_14() {
-    if (jj_scan_token(CONSTANT)) return true;
     return false;
   }
 
@@ -415,6 +415,16 @@ public class Robot implements RobotConstants {
   private boolean jj_3_10() {
     if (jj_scan_token(CHIPS)) return true;
     if (jj_3R_6()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_6() {
+    if (jj_scan_token(NUMERO)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_4() {
+    if (jj_scan_token(FACE)) return true;
     return false;
   }
 

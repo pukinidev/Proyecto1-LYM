@@ -198,7 +198,7 @@ void turn() :
   Map < String, Integer > directions = Map.of(
   ":right", 1, 
   ":around", 2, 
-  ":left", 3
+  ":left",-1
   );
   String c;
 }
@@ -209,7 +209,16 @@ void turn() :
       if (directions.containsKey(c))
       {
         int giros = directions.get(c);
-        for (int i = 1; i <= giros; i++)
+        int giro = 1;
+        if (giros < 0)
+        {
+          giro = Math.floorMod(giros, 4);
+        }
+        else if (giros > 1 )
+        {
+          giro = giros;
+        }
+        for (int i = 1; i <= giro; i++)
         {
           world.turnRight();
         }
