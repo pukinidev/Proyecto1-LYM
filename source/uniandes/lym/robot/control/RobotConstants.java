@@ -15,49 +15,57 @@ public interface RobotConstants {
   /** RegularExpression Id. */
   int RPAREN = 5;
   /** RegularExpression Id. */
-  int MOVE = 6;
+  int DEFVAR = 6;
   /** RegularExpression Id. */
-  int PUT = 7;
+  int MOVE = 7;
   /** RegularExpression Id. */
-  int PICK = 8;
+  int PUT = 8;
   /** RegularExpression Id. */
-  int TURN = 9;
+  int PICK = 9;
   /** RegularExpression Id. */
-  int FACE = 10;
+  int TURN = 10;
   /** RegularExpression Id. */
-  int MOVE_DIR = 11;
+  int FACE = 11;
   /** RegularExpression Id. */
-  int RUN_DIRS = 12;
+  int MOVE_DIR = 12;
   /** RegularExpression Id. */
-  int MOVE_FACE = 13;
+  int RUN_DIRS = 13;
   /** RegularExpression Id. */
-  int SK = 14;
+  int MOVE_FACE = 14;
   /** RegularExpression Id. */
-  int IF = 15;
+  int SK = 15;
   /** RegularExpression Id. */
-  int LOOP = 16;
+  int IF = 16;
   /** RegularExpression Id. */
-  int REPEAT = 17;
+  int LOOP = 17;
   /** RegularExpression Id. */
-  int DEFUN = 18;
+  int REPEAT = 18;
   /** RegularExpression Id. */
-  int FACING_P = 19;
+  int DEFUN = 19;
   /** RegularExpression Id. */
-  int CPU = 20;
+  int FACING_P = 20;
   /** RegularExpression Id. */
-  int CPI = 21;
+  int CPU = 21;
   /** RegularExpression Id. */
-  int CM = 22;
+  int CPI = 22;
   /** RegularExpression Id. */
-  int NOT = 23;
+  int CM = 23;
   /** RegularExpression Id. */
-  int BALLOONS = 24;
+  int NOT = 24;
   /** RegularExpression Id. */
-  int CHIPS = 25;
+  int BALLOONS = 25;
   /** RegularExpression Id. */
-  int NUMERO = 26;
+  int CHIPS = 26;
   /** RegularExpression Id. */
-  int DIGIT = 27;
+  int RIGHT = 27;
+  /** RegularExpression Id. */
+  int LEFT = 28;
+  /** RegularExpression Id. */
+  int AROUND = 29;
+  /** RegularExpression Id. */
+  int NUMERO = 30;
+  /** RegularExpression Id. */
+  int DIGIT = 31;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -70,6 +78,7 @@ public interface RobotConstants {
     "\"\\t\"",
     "\"(\"",
     "\")\"",
+    "\"defvar\"",
     "\"move\"",
     "\"put\"",
     "\"pick\"",
@@ -90,6 +99,9 @@ public interface RobotConstants {
     "\"not\"",
     "\":balloons\"",
     "\":chips\"",
+    "\":right\"",
+    "\":left\"",
+    "\":around\"",
     "<NUMERO>",
     "<DIGIT>",
     "\"\\n\"",

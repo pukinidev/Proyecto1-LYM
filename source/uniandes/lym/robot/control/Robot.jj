@@ -18,190 +18,233 @@ Modificado por Silvia Takahashi: Cambio en el lenguaje
 Abril: 2008 - Simplificado apra solo interpretaci�n
  **/
 
-options 
+options
 {
-	LOOKAHEAD=2; 
-	IGNORE_CASE=true; 
-	STATIC = false;
-	FORCE_LA_CHECK = true; /* Toca setear esto en true porque sino el LOOKAHEAD = 2 manda warning */
-	
+  LOOKAHEAD= 2;
+
+  IGNORE_CASE = true;
+  STATIC = false;
+  FORCE_LA_CHECK = true; /* Toca setear esto en true porque sino el LOOKAHEAD = 2 manda warning */
 }
-   
 
 PARSER_BEGIN(Robot)
-
 package uniandes.lym.robot.control;
-
 import uniandes.lym.robot.kernel.*;
 import java.awt.Point;
 import java.io.*;
 import java.util.Vector;
 import java.util.LinkedList;
-
-@SuppressWarnings("serial")
-public class Robot 
+@ SuppressWarnings("serial") 
+public class Robot
 {
+  private RobotWorldDec world;
 
-
-	private RobotWorldDec world;
-	
-	
-	void setWorld(RobotWorld w) {
-		world = (RobotWorldDec) w;	
-	}
-
-	String salida=new String();
+  void setWorld(RobotWorld w)
+  {
+    world = (RobotWorldDec) w;	
+  }
+  String salida = new String();
 }
+
 PARSER_END(Robot)
 
-SKIP:
+SKIP :
 {
-	" "
-	|	"\r"
-	|	"\t"
-//	| "\n"
+  " "
+| 	"\r"
+| 	"\t"
+  //	| "\n"
 }
 
-TOKEN: /* SEPARATORS */
+TOKEN : /* SEPARATORS */
 {
-	  <LPAREN: "(" >
-	 |<RPAREN: ")" >
-	 
+  < LPAREN : "(" >
+| < RPAREN : ")" >
 }
 
-TOKEN: /* COMMANDS */
+TOKEN : /* COMMANDS */
 {
-			<DEFVAR: "defvar" >
-		|   <MOVE:  "move">
-		| 	<PUT: "put">
-		| 	<PICK: "pick">
-		|   <TURN: "turn" >
-		|   <FACE: "face" >
-		|   <MOVE_DIR: "move_dir">
-		|   <RUN_DIRS: "run_dirs">
-		|   <MOVE_FACE: "move_face" >
-		|   <SK: "skip" >
-		
+  < DEFVAR : "defvar" >
+| < MOVE : "move" >
+| < PUT : "put" >
+| < PICK : "pick" >
+| < TURN : "turn" >
+| < FACE : "face" >
+| < MOVE_DIR : "move_dir" >
+| < RUN_DIRS : "run_dirs" >
+| < MOVE_FACE : "move_face" >
+| < SK : "skip" >
 }
 
-TOKEN: /* CONTROL STRUCTURES */
+TOKEN : /* CONTROL STRUCTURES */
 {
-  		 <IF: "if">
-  	   | <LOOP: "loop">
-  	   | <REPEAT: "repeat">
-  	   | <DEFUN: "defun">     
+  < IF : "if" >
+| < LOOP : "loop" >
+| < REPEAT : "repeat" >
+| < DEFUN : "defun" >
 }
 
-TOKEN: /* CONDITIONALS */
+TOKEN : /* CONDITIONALS */
 {
-		<FACING_P: "facing-p">
-       |<CPU: "can-put-p" >
-       |<CPI: "can-pick-p" >
-       |<CM: "can-move-p" >
-       |<NOT: "not" >
-		
+  < FACING_P : "facing-p" >
+| < CPU : "can-put-p" >
+| < CPI : "can-pick-p" >
+| < CM : "can-move-p" >
+| < NOT : "not" >
 }
 
+TOKEN : /*CONSTANTS*/
+{
+  < BALLOONS : ":balloons" >
+| < CHIPS : ":chips" >
+  /* DIRECTIONS */
+| < RIGHT: ":right" >
+| < LEFT:  ":left" >
+| < AROUND: ":around" >
+}
 
 TOKEN :
 {
-		<BALLOONS:  ":balloons" >
-		|<CHIPS:     ":chips"  >	
-
+  < NUMERO : (< DIGIT >)+ >
+| 	< #DIGIT : [ "0"-"9" ] >
 }
 
-
-TOKEN :
+boolean command(StringBuffer sistema) :
+{	
+  salida = new String();
+}
 {
-		<NUMERO: (<DIGIT>)+ >
-		|  	<#DIGIT: ["0"-"9"] >
+  (
+    < LPAREN > move() < RPAREN >
+  | < LPAREN > < PUT > putItem() < RPAREN >								
+  | < LPAREN > < PICK > pickItem() < RPAREN >
+  | < LPAREN > turn() < RPAREN >
+  )
+  "\n"
+  {
+    //  try {
+    //		 Thread.sleep(1);
+    //   } catch (InterruptedException e) {
+    //	        System.err.format("IOException: %s%n", e);
+    //	    }
+    sistema.append(salida);
+    return true;
+  }
+| "\n"
+  {
+    return true;
+  }
+| < EOF >
+  {
+    return false;
+  }
 }
 
-
-	boolean command(StringBuffer sistema) :
-	{	
-		salida=new String();
-		
-	}
-	
-	{
-		(
-		  
-		   <LPAREN> move() <RPAREN> 
-		|  <LPAREN> <PUT> putItem() <RPAREN> 					  			
-		|  <LPAREN> <PICK> pickItem() <RPAREN> 
-		) "\n" 
-
-		{
-		  //  try {
-	    	//		 Thread.sleep(1);
-	    	  //   } catch (InterruptedException e) {
-	    		//	        System.err.format("IOException: %s%n", e);
-	    		//	    }
-	    			 
-			sistema.append(salida);
-			return true;
-		}
-
-     |  "\n" { return true; }
-
-		| <EOF> {return false;} 
-	}
-
-	void putItem() :
-	{
-		int f=1;	
-	}
-	{
-		( <CHIPS>   f=numero() {world.putChips(f); salida = "Command:  Put Chips"; })
-		|  	  ( <BALLOONS>   f=numero() {world.putBalloons(f); salida = "Command:  Put Balloons";})	 
-
-	}
-
-	void pickItem() :
-	{
-		int f=1;	
-	}
-	{
-		( <CHIPS>    f=numero() {world.pickChips(f);salida = "Command:  Pick chips";})
-		|  	  ( <BALLOONS>    f=numero() {world.grabBalloons(f);salida="Command:  Pick balloons";})	 
-
-	}
-
-    void move():
+void putItem() :
+{
+  int f = 1;	
+}
+{
+  (
+    < CHIPS > f = numero()
     {
-      int x=1;
+      world.putChips(f);
     }
+  )
+|	
+  (
+    < BALLOONS > f = numero()
     {
-      (<MOVE>  x=numero() {world.moveForward(x);salida = "Command: Moveforward ";})
+      world.putBalloons(f);
     }
-	
-	
+  )	
+}
 
-	/**
+void pickItem() :
+{
+  int f = 1;	
+}
+{
+  (
+    < CHIPS > f = numero()
+    {
+      world.pickChips(f);
+    }
+  )
+|	
+  (
+    < BALLOONS > f = numero()
+    {
+      world.grabBalloons(f);
+    }
+  )	
+}
+
+void move() :
+{
+  int x = 1;
+}
+{
+  (
+    < MOVE > x = numero()
+    {
+      world.moveForward(x);
+      salida = "Command: Moveforward ";
+    }
+  )
+}
+
+void turn() :
+{
+}
+{
+    < TURN >
+    (    <RIGHT> 
+    {
+      world.turnRight();
+    }
+  	|
+  	<LEFT>
+  	{
+  	  for(int i = 1; i<=3; i+=1)
+  	  {
+  	    	world.turnRight();
+  	  }
+    }
+  	|
+  	<AROUND >
+  	{
+  	  for(int i = 1; i<=2; i+=1)
+  	  {
+  	    	world.turnRight();
+  	  }
+    }
+  	
+  	)
+}
+
+/**
 	 *  reconoce un numero entero sin signo
 	 * @return el valor entero correspondiente al valor reconocido
 	 */
 
-	int numero() throws Error:
-	{	
-		int total=1;
-	}
-	{
-		<NUMERO>
-		{
-			try 
-			{
-				total = Integer.parseInt(token.image);
-			} 
-			catch (NumberFormatException ee) 
-			{
-				// Dada la forma de NUMERO, sabemos que solo puede tener d�gitos
-				// Por lo tanto, lo unico que podria pasar es que el numero sea muy grande
-				throw new Error("Number out of bounds: "+token.image+"!!");
-			}
-			return total;
-		}
-	}
-
-	
+int numero() throws Error :
+{	
+  int total = 1;
+}
+{
+  < NUMERO >
+  {
+    try
+    {
+      total = Integer.parseInt(token.image);
+    }
+    catch (NumberFormatException ee)
+    {
+      // Dada la forma de NUMERO, sabemos que solo puede tener d�gitos
+      // Por lo tanto, lo unico que podria pasar es que el numero sea muy grande
+      throw new Error("Number out of bounds: " + token.image + "!!");
+    }
+    return total;
+  }
+}
