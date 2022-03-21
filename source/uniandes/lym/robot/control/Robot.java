@@ -16,7 +16,7 @@ public class Robot implements RobotConstants {
 
   final public boolean command(StringBuffer sistema) throws ParseException {
   salida = new String();
-    if (jj_2_7(2)) {
+    if (jj_2_5(2)) {
       if (jj_2_1(2)) {
         jj_consume_token(LPAREN);
         move();
@@ -33,15 +33,7 @@ public class Robot implements RobotConstants {
         jj_consume_token(RPAREN);
       } else if (jj_2_4(2)) {
         jj_consume_token(LPAREN);
-        turn();
-        jj_consume_token(RPAREN);
-      } else if (jj_2_5(2)) {
-        jj_consume_token(LPAREN);
-        face();
-        jj_consume_token(RPAREN);
-      } else if (jj_2_6(2)) {
-        jj_consume_token(LPAREN);
-        defvar();
+        moveface();
         jj_consume_token(RPAREN);
       } else {
         jj_consume_token(-1);
@@ -55,10 +47,10 @@ public class Robot implements RobotConstants {
     //	    }
     sistema.append(salida);
     {if (true) return true;}
-    } else if (jj_2_8(2)) {
+    } else if (jj_2_6(2)) {
       jj_consume_token(32);
     {if (true) return true;}
-    } else if (jj_2_9(2)) {
+    } else if (jj_2_7(2)) {
       jj_consume_token(0);
     {if (true) return false;}
     } else {
@@ -70,11 +62,11 @@ public class Robot implements RobotConstants {
 
   final public void putItem() throws ParseException {
   int f = 1;
-    if (jj_2_10(2)) {
+    if (jj_2_8(2)) {
       jj_consume_token(CHIPS);
       f = numero();
       world.putChips(f);
-    } else if (jj_2_11(2)) {
+    } else if (jj_2_9(2)) {
       jj_consume_token(BALLOONS);
       f = numero();
       world.putBalloons(f);
@@ -86,11 +78,11 @@ public class Robot implements RobotConstants {
 
   final public void pickItem() throws ParseException {
   int f = 1;
-    if (jj_2_12(2)) {
+    if (jj_2_10(2)) {
       jj_consume_token(CHIPS);
       f = numero();
       world.pickChips(f);
-    } else if (jj_2_13(2)) {
+    } else if (jj_2_11(2)) {
       jj_consume_token(BALLOONS);
       f = numero();
       world.grabBalloons(f);
@@ -102,10 +94,14 @@ public class Robot implements RobotConstants {
 
   final public void move() throws ParseException {
   int x = 1;
-    jj_consume_token(MOVE);
     x = numero();
       world.moveForward(x);
       salida = "Command: Moveforward ";
+  }
+
+  final public void moveface() throws ParseException {
+    jj_consume_token(MOVE_FACE);
+    face();
   }
 
   final public void turn() throws ParseException {
@@ -163,16 +159,34 @@ public class Robot implements RobotConstants {
   3, 3
   );
   String o;
-    jj_consume_token(FACE);
-    o = constant();
-    int inicio = world.getFacing();
-    inicio = turns.get(inicio);
-    int llegada = orientations.get(o);
-    int nuevaOrientacion = llegada - inicio;
-    int giros = Math.floorMod(nuevaOrientacion, 4);
-    for (int i = 1; i <= giros; i++)
-    {
-      world.turnRight();
+  int x = 1;
+    if (jj_2_12(2)) {
+      o = constant();
+      int inicio = world.getFacing();
+      inicio = turns.get(inicio);
+      int llegada = orientations.get(o);
+      int nuevaOrientacion = llegada - inicio;
+      int giros = Math.floorMod(nuevaOrientacion, 4);
+      for (int i = 1; i <= giros; i++)
+      {
+        world.turnRight();
+      }
+    } else if (jj_2_13(2)) {
+      x = numero();
+      o = constant();
+      int inicio = world.getFacing();
+      inicio = turns.get(inicio);
+      int llegada = orientations.get(o);
+      int nuevaOrientacion = llegada - inicio;
+      int giros = Math.floorMod(nuevaOrientacion, 4);
+      for (int i = 1; i <= giros; i++)
+      {
+        world.turnRight();
+      }
+      world.moveForward(x);
+    } else {
+      jj_consume_token(-1);
+      throw new ParseException();
     }
   }
 
@@ -216,6 +230,10 @@ public class Robot implements RobotConstants {
     throw new Error("Missing return statement in function");
   }
 
+/**
+	 * reconoce una variable
+	 * @return el valor string correspondiente al valor reconocido
+	 */
   final public String variable() throws ParseException, Error {
   Token token;
     label_2:
@@ -336,41 +354,29 @@ public class Robot implements RobotConstants {
     finally { jj_save(14, xla); }
   }
 
-  private boolean jj_3_9() {
+  private boolean jj_3_7() {
     if (jj_scan_token(0)) return true;
     return false;
   }
 
-  private boolean jj_3_8() {
-    if (jj_scan_token(32)) return true;
-    return false;
-  }
-
-  private boolean jj_3_14() {
-    if (jj_scan_token(CONSTANT)) return true;
-    return false;
-  }
-
-  private boolean jj_3_13() {
-    if (jj_scan_token(BALLOONS)) return true;
-    if (jj_3R_7()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_5() {
-    if (jj_scan_token(FACE)) return true;
-    return false;
-  }
-
-  private boolean jj_3_6() {
-    if (jj_scan_token(LPAREN)) return true;
+  private boolean jj_3_12() {
     if (jj_3R_6()) return true;
     return false;
   }
 
-  private boolean jj_3_5() {
-    if (jj_scan_token(LPAREN)) return true;
+  private boolean jj_3_6() {
+    if (jj_scan_token(32)) return true;
+    return false;
+  }
+
+  private boolean jj_3_11() {
+    if (jj_scan_token(BALLOONS)) return true;
     if (jj_3R_5()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_5() {
+    if (jj_scan_token(NUMERO)) return true;
     return false;
   }
 
@@ -380,15 +386,14 @@ public class Robot implements RobotConstants {
     return false;
   }
 
-  private boolean jj_3_12() {
-    if (jj_scan_token(CHIPS)) return true;
-    if (jj_3R_7()) return true;
-    return false;
-  }
-
   private boolean jj_3_3() {
     if (jj_scan_token(LPAREN)) return true;
     if (jj_scan_token(PICK)) return true;
+    return false;
+  }
+
+  private boolean jj_3_15() {
+    if (jj_scan_token(WORD)) return true;
     return false;
   }
 
@@ -398,13 +403,19 @@ public class Robot implements RobotConstants {
     return false;
   }
 
+  private boolean jj_3_10() {
+    if (jj_scan_token(CHIPS)) return true;
+    if (jj_3R_5()) return true;
+    return false;
+  }
+
   private boolean jj_3_1() {
     if (jj_scan_token(LPAREN)) return true;
     if (jj_3R_3()) return true;
     return false;
   }
 
-  private boolean jj_3_7() {
+  private boolean jj_3_5() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3_1()) {
@@ -413,53 +424,53 @@ public class Robot implements RobotConstants {
     jj_scanpos = xsp;
     if (jj_3_3()) {
     jj_scanpos = xsp;
-    if (jj_3_4()) {
-    jj_scanpos = xsp;
-    if (jj_3_5()) {
-    jj_scanpos = xsp;
-    if (jj_3_6()) return true;
+    if (jj_3_4()) return true;
     }
     }
     }
-    }
-    }
+    return false;
+  }
+
+  private boolean jj_3_9() {
+    if (jj_scan_token(BALLOONS)) return true;
+    if (jj_3R_5()) return true;
     return false;
   }
 
   private boolean jj_3R_4() {
-    if (jj_scan_token(TURN)) return true;
+    if (jj_scan_token(MOVE_FACE)) return true;
     return false;
   }
 
-  private boolean jj_3_11() {
-    if (jj_scan_token(BALLOONS)) return true;
-    if (jj_3R_7()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_7() {
-    if (jj_scan_token(NUMERO)) return true;
+  private boolean jj_3_14() {
+    if (jj_scan_token(CONSTANT)) return true;
     return false;
   }
 
   private boolean jj_3R_6() {
-    if (jj_scan_token(DEFVAR)) return true;
+    Token xsp;
+    if (jj_3_14()) return true;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3_14()) { jj_scanpos = xsp; break; }
+    }
     return false;
   }
 
-  private boolean jj_3_10() {
+  private boolean jj_3_8() {
     if (jj_scan_token(CHIPS)) return true;
-    if (jj_3R_7()) return true;
+    if (jj_3R_5()) return true;
+    return false;
+  }
+
+  private boolean jj_3_13() {
+    if (jj_3R_5()) return true;
+    if (jj_3R_6()) return true;
     return false;
   }
 
   private boolean jj_3R_3() {
-    if (jj_scan_token(MOVE)) return true;
-    return false;
-  }
-
-  private boolean jj_3_15() {
-    if (jj_scan_token(WORD)) return true;
+    if (jj_3R_5()) return true;
     return false;
   }
 

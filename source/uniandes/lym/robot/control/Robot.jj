@@ -71,7 +71,7 @@ TOKEN : /* COMMANDS */
 | < FACE : "face" >
 | < MOVE_DIR : "move_dir" >
 | < RUN_DIRS : "run_dirs" >
-| < MOVE_FACE : "move_face" >
+| < MOVE_FACE : "move-face" >
 | < SK : "skip" >
 }
 
@@ -116,9 +116,7 @@ boolean command(StringBuffer sistema) :
     < LPAREN > move() < RPAREN >
   | < LPAREN > < PUT > putItem() < RPAREN >								
   | < LPAREN > < PICK > pickItem() < RPAREN >
-  | < LPAREN > turn() < RPAREN >
-  | < LPAREN > face() < RPAREN >
-  | < LPAREN > defvar() < RPAREN >
+  | < LPAREN > moveface() < RPAREN >
   )
   "\n"
   {
@@ -186,11 +184,19 @@ void move() :
 }
 {
   (
-    < MOVE > x = numero()
+    x = numero()
     {
       world.moveForward(x);
       salida = "Command: Moveforward ";
     }
+  )
+}
+
+void moveface() :
+{}
+{
+  (
+    < MOVE_FACE > face()
   )
 }
 
@@ -260,20 +266,36 @@ void face() :
   3, 3
   );
   String o;
+  int x = 1;
 }
 {
-  < FACE > o = constant()
-  {
-    int inicio = world.getFacing();
-    inicio = turns.get(inicio);
-    int llegada = orientations.get(o);
-    int nuevaOrientacion = llegada - inicio;
-    int giros = Math.floorMod(nuevaOrientacion, 4);
-    for (int i = 1; i <= giros; i++)
+  (
+    o = constant()
     {
-      world.turnRight();
+      int inicio = world.getFacing();
+      inicio = turns.get(inicio);
+      int llegada = orientations.get(o);
+      int nuevaOrientacion = llegada - inicio;
+      int giros = Math.floorMod(nuevaOrientacion, 4);
+      for (int i = 1; i <= giros; i++)
+      {
+        world.turnRight();
+      }
     }
-  }
+  | x = numero() o = constant()
+    {
+      int inicio = world.getFacing();
+      inicio = turns.get(inicio);
+      int llegada = orientations.get(o);
+      int nuevaOrientacion = llegada - inicio;
+      int giros = Math.floorMod(nuevaOrientacion, 4);
+      for (int i = 1; i <= giros; i++)
+      {
+        world.turnRight();
+      }
+      world.moveForward(x);
+    }
+  )
 }
 
 /**
@@ -318,6 +340,11 @@ String constant() throws Error :
     return token.image;
   }
 }
+
+/**
+	 * reconoce una variable
+	 * @return el valor string correspondiente al valor reconocido
+	 */
 
 String variable() throws Error :
 {

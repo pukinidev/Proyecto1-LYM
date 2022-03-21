@@ -86,7 +86,7 @@ public interface RobotConstants {
     "\"face\"",
     "\"move_dir\"",
     "\"run_dirs\"",
-    "\"move_face\"",
+    "\"move-face\"",
     "\"skip\"",
     "\"if\"",
     "\"loop\"",

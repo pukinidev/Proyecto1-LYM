@@ -435,8 +435,10 @@ private int jjMoveStringLiteralDfa4_0(long old0, long active0)
    }
    switch(curChar)
    {
+      case 45:
+         return jjMoveStringLiteralDfa5_0(active0, 0x4000L);
       case 95:
-         return jjMoveStringLiteralDfa5_0(active0, 0x5000L);
+         return jjMoveStringLiteralDfa5_0(active0, 0x1000L);
       case 65:
       case 97:
          return jjMoveStringLiteralDfa5_0(active0, 0x40040L);
