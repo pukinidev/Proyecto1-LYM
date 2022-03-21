@@ -123,15 +123,10 @@ boolean command(StringBuffer sistema) :
   | < LPAREN > < PUT > putItem() < RPAREN >								
   | < LPAREN > < PICK > pickItem() < RPAREN >
   | < LPAREN > variable() < RPAREN >
-  | < LPAREN > searchKey() < RPAREN >
+  | < LPAREN > assing() < RPAREN >
   )
   "\n"
   {
-    //  try {
-    //		 Thread.sleep(1);
-    //   } catch (InterruptedException e) {
-    //	        System.err.format("IOException: %s%n", e);
-    //	    }
     sistema.append(salida);
     return true;
   }
@@ -292,7 +287,18 @@ void assing() :
   int n;
 }
 {
-  "="
+  "=" name = var() n = numero()
+  {
+    if (variables.containsKey(name))
+    {
+      variables.replace(name, n);
+      salida = "The value of " + name + " has been changed";
+    }
+    else
+    {
+      salida = "There is no a variable with such name!";
+    }
+  }
 }
 
 void face() :
