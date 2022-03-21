@@ -187,6 +187,7 @@ void pickItem() :
 void move() :
 {
   int x = 1;
+  String v;
 }
 {
   (
@@ -194,6 +195,11 @@ void move() :
     {
       world.moveForward(x);
       salida = "Command: Moveforward ";
+    }
+  | v = var()
+    {
+      int m = variables.get(v);
+      world.moveForward(m);
     }
   )
 }
