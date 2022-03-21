@@ -36,6 +36,8 @@ import java.util.*;
 @ SuppressWarnings("serial") 
 public class Robot
 {
+  HashMap < String, Integer > variables = new HashMap < String, Integer > ();
+
   private RobotWorldDec world;
 
   void setWorld(RobotWorld w)
@@ -72,6 +74,7 @@ TOKEN : /* COMMANDS */
 | < MOVE_DIR : "move_dir" >
 | < RUN_DIRS : "run_dirs" >
 | < MOVE_FACE : "move-face" >
+| < SEARCH : "search" >
 | < SK : "skip" >
 }
 
@@ -113,10 +116,14 @@ boolean command(StringBuffer sistema) :
 }
 {
   (
-    < LPAREN > move() < RPAREN >
+    < LPAREN > < MOVE > move() < RPAREN >
+  | < LPAREN > turn() < RPAREN >
+  | < LPAREN > < FACE > face() < RPAREN >
+  | < LPAREN > moveface() < RPAREN >
   | < LPAREN > < PUT > putItem() < RPAREN >								
   | < LPAREN > < PICK > pickItem() < RPAREN >
-  | < LPAREN > moveface() < RPAREN >
+  | < LPAREN > variable() < RPAREN >
+  | < LPAREN > searchKey() < RPAREN >
   )
   "\n"
   {
@@ -140,7 +147,7 @@ boolean command(StringBuffer sistema) :
 
 void putItem() :
 {
-  int f = 1;	
+  int f = 1;
 }
 {
   (
@@ -239,16 +246,53 @@ void turn() :
   )
 }
 
-void defvar() :
+void searchKey() :
+{
+  String key;
+}
+{
+  < SEARCH > key = var()
+  {
+    if (variables.containsKey(key))
+    {
+      salida = "YES";
+    }
+    else
+    {
+      salida = "NO";
+    }
+  }
+}
+
+HashMap < String, Integer > variable() :
+{
+  String name;
+  int n = 1;
+}
+{
+  (
+    name = var() n = numero()
+    {
+      if (variables.containsKey(name))
+      {
+        salida = "The variable alredy exists";
+      }
+      else
+      {
+        variables.put(name, n);
+      }
+      return variables;
+    }
+  )
+}
+
+void assing() :
 {
   String name;
   int n;
 }
 {
-  < DEFVAR >
-  (
-    name = variable() n = numero()
-  )
+  "="
 }
 
 void face() :
@@ -346,7 +390,7 @@ String constant() throws Error :
 	 * @return el valor string correspondiente al valor reconocido
 	 */
 
-String variable() throws Error :
+String var() throws Error :
 {
   Token token;
 }
