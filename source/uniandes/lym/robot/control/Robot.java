@@ -6,7 +6,11 @@ import java.io.*;
 import java.util.*;
 @ SuppressWarnings("serial")
 public class Robot implements RobotConstants {
+  /* HASHMAP */
   HashMap < String, Integer > variables = new HashMap < String, Integer > ();
+  Map < String, Integer > directions = Map.of(":right", 1, ":around", 2, ":left", - 1);
+  Map < String, Integer > orientations = Map.of(":north", 0, ":east", 1, ":south", 2, ":west", 3);
+  Map < Integer, Integer > turns = Map.of(0, 0, 1, 2, 2, 1, 3, 3);
 
   private RobotWorldDec world;
 
@@ -120,11 +124,6 @@ public class Robot implements RobotConstants {
   }
 
   final public void turn() throws ParseException {
-  Map < String, Integer > directions = Map.of(
-  ":right", 1,
-  ":around", 2,
-  ":left",-1
-  );
   String c;
     jj_consume_token(TURN);
     c = constant();
@@ -173,7 +172,7 @@ public class Robot implements RobotConstants {
     n = numero();
       if (variables.containsKey(name))
       {
-        salida = "The variable alredy exists";
+        salida = "The variable alredy exists, use assing instead!";
       }
       else
       {
@@ -192,7 +191,11 @@ public class Robot implements RobotConstants {
     if (variables.containsKey(name))
     {
       variables.replace(name, n);
-      salida = "The value of " + name + " has been changed";
+      salida = "The value of " + name + " has been changed!";
+      for (String key : variables.keySet())
+      {
+        System.out.println("Key: " + key + " Value: " + variables.get(key) + "\u005cn");
+      }
     }
     else
     {
@@ -201,18 +204,6 @@ public class Robot implements RobotConstants {
   }
 
   final public void face() throws ParseException {
-  Map < String, Integer > orientations = Map.of(
-  ":north", 0,
-  ":east", 1,
-  ":south", 2,
-  ":west", 3
-  );
-  Map < Integer, Integer > turns = Map.of(
-  0, 0,
-  1, 2,
-  2, 1,
-  3, 3
-  );
   String o;
   int x = 1;
     if (jj_2_16(2)) {
@@ -437,16 +428,6 @@ public class Robot implements RobotConstants {
     finally { jj_save(18, xla); }
   }
 
-  private boolean jj_3_11() {
-    if (jj_scan_token(0)) return true;
-    return false;
-  }
-
-  private boolean jj_3_16() {
-    if (jj_3R_8()) return true;
-    return false;
-  }
-
   private boolean jj_3_10() {
     if (jj_scan_token(33)) return true;
     return false;
@@ -464,19 +445,9 @@ public class Robot implements RobotConstants {
     return false;
   }
 
-  private boolean jj_3R_5() {
-    if (jj_3R_9()) return true;
-    return false;
-  }
-
   private boolean jj_3_7() {
     if (jj_scan_token(LPAREN)) return true;
     if (jj_3R_5()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_7() {
-    if (jj_scan_token(NUMERO)) return true;
     return false;
   }
 
@@ -498,8 +469,8 @@ public class Robot implements RobotConstants {
     return false;
   }
 
-  private boolean jj_3_19() {
-    if (jj_scan_token(WORD)) return true;
+  private boolean jj_3_16() {
+    if (jj_3R_8()) return true;
     return false;
   }
 
@@ -509,24 +480,14 @@ public class Robot implements RobotConstants {
     return false;
   }
 
-  private boolean jj_3R_9() {
-    Token xsp;
-    if (jj_3_19()) return true;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3_19()) { jj_scanpos = xsp; break; }
-    }
+  private boolean jj_3R_5() {
+    if (jj_3R_9()) return true;
     return false;
   }
 
   private boolean jj_3_2() {
     if (jj_scan_token(LPAREN)) return true;
     if (jj_3R_3()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_3() {
-    if (jj_scan_token(TURN)) return true;
     return false;
   }
 
@@ -570,9 +531,50 @@ public class Robot implements RobotConstants {
     return false;
   }
 
+  private boolean jj_3R_3() {
+    if (jj_scan_token(TURN)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_7() {
+    if (jj_scan_token(NUMERO)) return true;
+    return false;
+  }
+
+  private boolean jj_3_19() {
+    if (jj_scan_token(WORD)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_9() {
+    Token xsp;
+    if (jj_3_19()) return true;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3_19()) { jj_scanpos = xsp; break; }
+    }
+    return false;
+  }
+
   private boolean jj_3_13() {
     if (jj_scan_token(BALLOONS)) return true;
     if (jj_3R_7()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_4() {
+    if (jj_scan_token(MOVE_FACE)) return true;
+    return false;
+  }
+
+  private boolean jj_3_12() {
+    if (jj_scan_token(CHIPS)) return true;
+    if (jj_3R_7()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_6() {
+    if (jj_scan_token(34)) return true;
     return false;
   }
 
@@ -591,25 +593,14 @@ public class Robot implements RobotConstants {
     return false;
   }
 
-  private boolean jj_3R_4() {
-    if (jj_scan_token(MOVE_FACE)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_6() {
-    if (jj_scan_token(34)) return true;
+  private boolean jj_3_11() {
+    if (jj_scan_token(0)) return true;
     return false;
   }
 
   private boolean jj_3_17() {
     if (jj_3R_7()) return true;
     if (jj_3R_8()) return true;
-    return false;
-  }
-
-  private boolean jj_3_12() {
-    if (jj_scan_token(CHIPS)) return true;
-    if (jj_3R_7()) return true;
     return false;
   }
 

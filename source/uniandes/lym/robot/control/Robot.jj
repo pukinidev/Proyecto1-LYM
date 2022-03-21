@@ -36,7 +36,11 @@ import java.util.*;
 @ SuppressWarnings("serial") 
 public class Robot
 {
+  /* HASHMAP */
   HashMap < String, Integer > variables = new HashMap < String, Integer > ();
+  Map < String, Integer > directions = Map.of(":right", 1, ":around", 2, ":left", - 1);
+  Map < String, Integer > orientations = Map.of(":north", 0, ":east", 1, ":south", 2, ":west", 3);
+  Map < Integer, Integer > turns = Map.of(0, 0, 1, 2, 2, 1, 3, 3);
 
   private RobotWorldDec world;
 
@@ -204,11 +208,6 @@ void moveface() :
 
 void turn() :
 {
-  Map < String, Integer > directions = Map.of(
-  ":right", 1, 
-  ":around", 2, 
-  ":left",-1
-  );
   String c;
 }
 {
@@ -270,7 +269,7 @@ HashMap < String, Integer > variable() :
     {
       if (variables.containsKey(name))
       {
-        salida = "The variable alredy exists";
+        salida = "The variable alredy exists, use assing instead!";
       }
       else
       {
@@ -292,7 +291,11 @@ void assing() :
     if (variables.containsKey(name))
     {
       variables.replace(name, n);
-      salida = "The value of " + name + " has been changed";
+      salida = "The value of " + name + " has been changed!";
+      for (String key : variables.keySet())
+      {
+        System.out.println("Key: " + key + " Value: " + variables.get(key) + "\n");
+      }
     }
     else
     {
@@ -303,18 +306,6 @@ void assing() :
 
 void face() :
 {
-  Map < String, Integer > orientations = Map.of(
-  ":north", 0, 
-  ":east", 1, 
-  ":south", 2, 
-  ":west", 3
-  );
-  Map < Integer, Integer > turns = Map.of(
-  0, 0, 
-  1, 2, 
-  2, 1, 
-  3, 3
-  );
   String o;
   int x = 1;
 }
