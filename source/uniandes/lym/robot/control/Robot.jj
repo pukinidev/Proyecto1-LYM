@@ -126,7 +126,7 @@ boolean command(StringBuffer sistema) :
   | < LPAREN > moveface() < RPAREN >
   | < LPAREN > < PUT > putItem() < RPAREN >								
   | < LPAREN > < PICK > pickItem() < RPAREN >
-  | < LPAREN > variable() < RPAREN >
+  | < LPAREN > < DEFVAR > variable() < RPAREN >
   | < LPAREN > assing() < RPAREN >
   )
   "\n"
@@ -147,41 +147,73 @@ boolean command(StringBuffer sistema) :
 void putItem() :
 {
   int f = 1;
+  String v;	
 }
 {
   (
-    < CHIPS > f = numero()
-    {
-      world.putChips(f);
-    }
+    < CHIPS >
+    (
+      f = numero()
+      {
+        world.putChips(f);
+      }
+    | 
+      v = var()
+      {
+        world.putChips(variables.get(v));
+      }
+    )
   )
-|	
+|
   (
-    < BALLOONS > f = numero()
-    {
-      world.putBalloons(f);
-    }
-  )	
+    < BALLOONS >
+    (
+      f = numero()
+      {
+        world.putBalloons(f);
+      }
+    | v = var()
+      {
+        world.putBalloons(variables.get(v));
+      }
+    )
+  )
 }
 
 void pickItem() :
 {
-  int f = 1;	
+  int f = 1;
+  String v;	
 }
 {
   (
-    < CHIPS > f = numero()
-    {
-      world.pickChips(f);
-    }
+    < CHIPS >
+    (
+      f = numero()
+      {
+        world.pickChips(f);
+      }
+    | 
+      v = var()
+      {
+        world.pickChips(variables.get(v));
+      }
+    )
   )
-|	
+|
   (
-    < BALLOONS > f = numero()
-    {
-      world.grabBalloons(f);
-    }
-  )	
+    < BALLOONS >
+    (
+      f = numero()
+      {
+        world.grabBalloons(f);
+      }
+    | v = var()
+      {
+        world.grabBalloons(variables.get(v));
+      }
+    )
+  )
 }
 
 void move() :
@@ -198,8 +230,7 @@ void move() :
     }
   | v = var()
     {
-      int m = variables.get(v);
-      world.moveForward(m);
+      world.moveForward(variables.get(v));
     }
   )
 }
