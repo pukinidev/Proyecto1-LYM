@@ -33,41 +33,39 @@ public interface RobotConstants {
   /** RegularExpression Id. */
   int MOVE_FACE = 14;
   /** RegularExpression Id. */
-  int SEARCH = 15;
+  int SK = 15;
   /** RegularExpression Id. */
-  int SK = 16;
+  int IF = 16;
   /** RegularExpression Id. */
-  int IF = 17;
+  int LOOP = 17;
   /** RegularExpression Id. */
-  int LOOP = 18;
+  int REPEAT = 18;
   /** RegularExpression Id. */
-  int REPEAT = 19;
+  int DEFUN = 19;
   /** RegularExpression Id. */
-  int DEFUN = 20;
+  int FACING_P = 20;
   /** RegularExpression Id. */
-  int FACING_P = 21;
+  int CPU = 21;
   /** RegularExpression Id. */
-  int CPU = 22;
+  int CPI = 22;
   /** RegularExpression Id. */
-  int CPI = 23;
+  int CM = 23;
   /** RegularExpression Id. */
-  int CM = 24;
+  int NOT = 24;
   /** RegularExpression Id. */
-  int NOT = 25;
+  int BALLOONS = 25;
   /** RegularExpression Id. */
-  int BALLOONS = 26;
+  int CHIPS = 26;
   /** RegularExpression Id. */
-  int CHIPS = 27;
+  int NUMERO = 27;
   /** RegularExpression Id. */
-  int NUMERO = 28;
+  int DIGIT = 28;
   /** RegularExpression Id. */
-  int DIGIT = 29;
+  int ALPHABET = 29;
   /** RegularExpression Id. */
-  int ALPHABET = 30;
+  int CONSTANT = 30;
   /** RegularExpression Id. */
-  int CONSTANT = 31;
-  /** RegularExpression Id. */
-  int WORD = 32;
+  int WORD = 31;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -86,10 +84,9 @@ public interface RobotConstants {
     "\"pick\"",
     "\"turn\"",
     "\"face\"",
-    "\"move_dir\"",
-    "\"run_dirs\"",
+    "\"move-dir\"",
+    "\"run-dirs\"",
     "\"move-face\"",
-    "\"search\"",
     "\"skip\"",
     "\"if\"",
     "\"loop\"",

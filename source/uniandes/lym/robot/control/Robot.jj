@@ -20,7 +20,7 @@ Abril: 2008 - Simplificado apra solo interpretaci�n
 
 options
 {
-  LOOKAHEAD= 2;
+  LOOKAHEAD= 3;
 
   IGNORE_CASE = true;
   STATIC = false;
@@ -37,8 +37,9 @@ import java.util.*;
 public class Robot
 {
   /* HASHMAP */
-  HashMap < String, Integer > variables = new HashMap < String, Integer > ();
+  Map < String, Integer > variables = new HashMap < String, Integer > ();
   Map < String, Integer > directions = Map.of(":right", 1, ":around", 2, ":left", - 1);
+  Map < String, Integer > dire = Map.of(":right", 1, ":left", - 1, ":front", 0, ":back", 2);
   Map < String, Integer > orientations = Map.of(":north", 0, ":east", 1, ":south", 2, ":west", 3);
   Map < Integer, Integer > turns = Map.of(0, 0, 1, 2, 2, 1, 3, 3);
 
@@ -75,10 +76,9 @@ TOKEN : /* COMMANDS */
 | < PICK : "pick" >
 | < TURN : "turn" >
 | < FACE : "face" >
-| < MOVE_DIR : "move_dir" >
-| < RUN_DIRS : "run_dirs" >
+| < MOVE_DIR : "move-dir" >
+| < RUN_DIRS : "run-dirs" >
 | < MOVE_FACE : "move-face" >
-| < SEARCH : "search" >
 | < SK : "skip" >
 }
 
@@ -119,16 +119,20 @@ boolean command(StringBuffer sistema) :
   salida = new String();
 }
 {
+  < LPAREN >
   (
-    < LPAREN > < MOVE > move() < RPAREN >
-  | < LPAREN > turn() < RPAREN >
-  | < LPAREN > < FACE > face() < RPAREN >
-  | < LPAREN > moveface() < RPAREN >
-  | < LPAREN > < PUT > putItem() < RPAREN >								
-  | < LPAREN > < PICK > pickItem() < RPAREN >
-  | < LPAREN > < DEFVAR > variable() < RPAREN >
-  | < LPAREN > assing() < RPAREN >
+    < MOVE > move()
+  | < TURN > turn()
+  | < PUT > putItem()							
+  | < PICK > pickItem()
+  | < DEFVAR > variable()
+  | assing()
+  | < MOVE_FACE > moveface()
+  | < FACE > face()
+  | < MOVE_DIR > movedir()
+  | < SK >
   )
+  < RPAREN > 
   "\n"
   {
     sistema.append(salida);
@@ -144,6 +148,7 @@ boolean command(StringBuffer sistema) :
   }
 }
 
+// COMANDS
 void putItem() :
 {
   int f = 1;
@@ -235,21 +240,13 @@ void move() :
   )
 }
 
-void moveface() :
-{}
-{
-  (
-    < MOVE_FACE > face()
-  )
-}
-
 void turn() :
 {
   String c;
 }
 {
   (
-    < TURN > c = constant()
+    c = constant()
     {
       if (directions.containsKey(c))
       {
@@ -271,31 +268,88 @@ void turn() :
       }
       else
       {
-        salida = "The direction doesn't exist";
+        throw new Error("The direction doesn't exist");
       }
     }
   )
 }
 
-void searchKey() :
+void movedir() :
 {
-  String key;
+  String d;
+  int n = 1;
 }
 {
-  < SEARCH > key = var()
-  {
-    if (variables.containsKey(key))
-    {
-      salida = "YES";
-    }
-    else
-    {
-      salida = "NO";
-    }
-  }
+  (
+    (
+      n = numero() d = constant()
+      {
+        int puki = world.getFacing();
+        System.out.println("Posicion inicial: " + puki);
+        if (dire.containsKey(d))
+        {
+          int giros = dire.get(d);
+          if (giros < 0)
+          {
+            for (int i = 1; i <= Math.floorMod(giros, 4); i++)
+            {
+              world.turnRight();
+            }
+            world.moveForward(n);
+          }
+          else if (giros > 1)
+          {
+            for (int i = 1; i <= giros; i++)
+            {
+              world.turnRight();
+            }
+            world.moveForward(n);
+          }
+          else if (giros == 0)
+          {
+            world.moveForward(n);
+          }
+          else if (giros == 1)
+          {
+            world.turnRight();
+            world.moveForward(n);
+          }
+          salida = "The robot has turned " + d;
+        }
+        else
+        {
+          throw new Error("The direction doesn't exist");
+        }
+        switch (d)
+        {
+          case ":back" : 
+          for (int i = 1; i <= 2; i++)
+          {
+            world.turnRight();
+          }
+          break;
+          case ":front" : 
+          salida = "Quedate quieto wey";
+          break;
+          case ":right" : 
+          for (int i = 1; i <= 3; i++)
+          {
+            world.turnRight();
+          }
+          break;
+          case ":left" : 
+          for (int i = 1; i <= 1; i++)
+          {
+            world.turnRight();
+          }
+          break;
+        }
+      }
+    )
+  )
 }
 
-HashMap < String, Integer > variable() :
+Map < String, Integer > variable() :
 {
   String name;
   int n = 1;
@@ -344,9 +398,11 @@ void assing() :
 void face() :
 {
   String o;
+  String v;
   int x = 1;
 }
 {
+  /* Crear una sola funcion que haga esto */
   (
     o = constant()
     {
@@ -360,7 +416,18 @@ void face() :
         world.turnRight();
       }
     }
-  | x = numero() o = constant()
+  )
+}
+
+void moveface() :
+{
+  String o;
+  String v;
+  int x = 1;
+}
+{
+  (
+    x = numero() o = constant()
     {
       int inicio = world.getFacing();
       inicio = turns.get(inicio);
@@ -374,8 +441,25 @@ void face() :
       world.moveForward(x);
     }
   )
+|
+  (
+    v = var() o = constant()
+    {
+      int inicio = world.getFacing();
+      inicio = turns.get(inicio);
+      int llegada = orientations.get(o);
+      int nuevaOrientacion = llegada - inicio;
+      int giros = Math.floorMod(nuevaOrientacion, 4);
+      for (int i = 1; i <= giros; i++)
+      {
+        world.turnRight();
+      }
+      world.moveForward(variables.get(v));
+    }
+  )
 }
 
+// TOKENIZER 
 /**
 	 *  reconoce un numero entero sin signo
 	 * @return el valor entero correspondiente al valor reconocido
