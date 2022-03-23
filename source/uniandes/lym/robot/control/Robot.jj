@@ -1,26 +1,20 @@
 /*
-Gramatica para el Robot:
-Autor: Alejandro Arango
-Modificado por: Silvia Takahashi
-Modificado por: Juan Pablo Morales.
-Agregadas producciones para manejar globos
-Modificado por Silvia Takahashi
-Eliminadas producciones para manejar globos
-Agregado el esqueleto para la traduccion
-Modificado por Silvia Takahashi 
-Re: Agregar Reglas para el manejo de globos
-Modificado por Saulo Daza y Sonia Vivas
-Modificado por Silvia Takahashi
-Eliminadas reglas de traducci�n DE  MARCROS
-Cambio del lenguaje de comandos
-Modificado por Silvia Takahashi: algunas Reglas para traduccion
-Modificado por Silvia Takahashi: Cambio en el lenguaje
-Abril: 2008 - Simplificado apra solo interpretaci�n
+
+-----------------------------------------------------------------------------------------------------
+
+Valeria Caro Ramirez - v.caro@uniandes.edu.co - 202111040
+Sofia Velasquez Marin - s.velasquezm2@uniandes.edu.co - 202113334
+
+En nuestro interprete, solo estan funcionando las instrucciones!
+Tenga un buen dia!
+
+-----------------------------------------------------------------------------------------------------
+
  **/
 
 options
 {
-  LOOKAHEAD= 3;
+  LOOKAHEAD= 1;
 
   IGNORE_CASE = true;
   STATIC = false;
@@ -42,6 +36,7 @@ public class Robot
   Map < String, Integer > dire = Map.of(":right", 1, ":left", - 1, ":front", 0, ":back", 2);
   Map < String, Integer > orientations = Map.of(":north", 0, ":east", 1, ":south", 2, ":west", 3);
   Map < Integer, Integer > turns = Map.of(0, 0, 1, 2, 2, 1, 3, 3);
+
 
   private RobotWorldDec world;
 
@@ -114,6 +109,7 @@ TOKEN :
 | < WORD : (< ALPHABET >)+ >
 }
 
+// (turn :right) (move 2) (move 3)
 boolean command(StringBuffer sistema) :
 {	
   salida = new String();
@@ -129,11 +125,13 @@ boolean command(StringBuffer sistema) :
   | assing()
   | < MOVE_FACE > moveface()
   | < FACE > face()
+  | conditions()
   | < MOVE_DIR > movedir()
+  | < RUN_DIRS > rundirs()
   | < SK >
+  | < NOT > <LPAREN> not() <LPAREN>
   )
-  < RPAREN > 
-  "\n"
+  < RPAREN >
   {
     sistema.append(salida);
     return true;
@@ -147,6 +145,7 @@ boolean command(StringBuffer sistema) :
     return false;
   }
 }
+
 
 // COMANDS
 void putItem() :
@@ -245,38 +244,37 @@ void turn() :
   String c;
 }
 {
-  (
-    c = constant()
+  c = constant()
+  {
+    if (directions.containsKey(c))
     {
-      if (directions.containsKey(c))
+      int giros = directions.get(c);
+      int giro = 1;
+      if (giros < 0)
       {
-        int giros = directions.get(c);
-        int giro = 1;
-        if (giros < 0)
-        {
-          giro = Math.floorMod(giros, 4);
-        }
-        else if (giros > 1)
-        {
-          giro = giros;
-        }
-        for (int i = 1; i <= giro; i++)
-        {
-          world.turnRight();
-        }
-        salida = "The robot has turned " + c;
+        giro = Math.floorMod(giros, 4);
       }
-      else
+      else if (giros > 1)
       {
-        throw new Error("The direction doesn't exist");
+        giro = giros;
       }
+      for (int i = 1; i <= giro; i++)
+      {
+        world.turnRight();
+      }
+      salida = "The robot has turned " + c;
     }
-  )
+    else
+    {
+      throw new Error("The direction doesn't exist");
+    }
+  }
 }
 
 void movedir() :
 {
   String d;
+  String v;
   int n = 1;
 }
 {
@@ -284,8 +282,6 @@ void movedir() :
     (
       n = numero() d = constant()
       {
-        int puki = world.getFacing();
-        System.out.println("Posicion inicial: " + puki);
         if (dire.containsKey(d))
         {
           int giros = dire.get(d);
@@ -346,7 +342,131 @@ void movedir() :
         }
       }
     )
+  | v = var() d = constant()
+    {
+      if (dire.containsKey(d))
+      {
+        int giros = dire.get(d);
+        if (giros < 0)
+        {
+          for (int i = 1; i <= Math.floorMod(giros, 4); i++)
+          {
+            world.turnRight();
+          }
+          world.moveForward(variables.get(v));
+        }
+        else if (giros > 1)
+        {
+          for (int i = 1; i <= giros; i++)
+          {
+            world.turnRight();
+          }
+          world.moveForward(variables.get(v));
+        }
+        else if (giros == 0)
+        {
+          world.moveForward(variables.get(v));
+        }
+        else if (giros == 1)
+        {
+          world.turnRight();
+          world.moveForward(variables.get(v));
+        }
+        salida = "The robot has turned " + d;
+      }
+      else
+      {
+        throw new Error("The direction doesn't exist");
+      }
+      switch (d)
+      {
+        case ":back" : 
+        for (int i = 1; i <= 2; i++)
+        {
+          world.turnRight();
+        }
+        break;
+        case ":front" : 
+        salida = "Quedate quieto wey";
+        break;
+        case ":right" : 
+        for (int i = 1; i <= 3; i++)
+        {
+          world.turnRight();
+        }
+        break;
+        case ":left" : 
+        for (int i = 1; i <= 1; i++)
+        {
+          world.turnRight();
+        }
+        break;
+      }
+    }
   )
+}
+
+void rundirs() :
+{
+  String o;
+  ArrayList < String > ldire = new ArrayList < String > ();
+}
+{
+  (
+    o = constant()
+    {
+      ldire.add(o);
+    }
+  )+
+  {
+    int inicio = world.getFacing();
+    int llegada = 0;
+    for (String key : ldire)
+    {
+      if (dire.containsKey(key))
+      {
+        int giros = dire.get(key);
+        if (giros < 0)
+        {
+          for (int i = 1; i <= Math.floorMod(giros, 4); i++)
+          {
+            world.turnRight();
+          }
+          world.moveForward(1);
+        }
+        else if (giros > 1)
+        {
+          for (int i = 1; i <= giros; i++)
+          {
+            world.turnRight();
+          }
+          world.moveForward(1);
+        }
+        else if (giros == 0)
+        {
+          world.moveForward(1);
+        }
+        else if (giros == 1)
+        {
+          world.turnRight();
+          world.moveForward(1);
+        }
+        else
+        {
+          throw new Error("The direction doesn't exist");
+        }
+      }
+    }
+    llegada = turns.get(world.getFacing());
+    inicio = turns.get(inicio);
+    int nuevaOrientacion = inicio - llegada;
+    int giros = Math.floorMod(nuevaOrientacion, 4);
+    for (int i = 1; i <= giros; i++)
+    {
+      world.turnRight();
+    }
+    System.out.println("giros" + giros);
+  }
 }
 
 Map < String, Integer > variable() :
@@ -402,7 +522,6 @@ void face() :
   int x = 1;
 }
 {
-  /* Crear una sola funcion que haga esto */
   (
     o = constant()
     {
@@ -445,16 +564,116 @@ void moveface() :
   (
     v = var() o = constant()
     {
-      int inicio = world.getFacing();
-      inicio = turns.get(inicio);
-      int llegada = orientations.get(o);
-      int nuevaOrientacion = llegada - inicio;
-      int giros = Math.floorMod(nuevaOrientacion, 4);
-      for (int i = 1; i <= giros; i++)
+      int inicio1 = world.getFacing();
+      inicio1 = turns.get(inicio1);
+      int llegada1 = orientations.get(o);
+      int nuevaOrientacion1 = llegada1 - inicio1;
+      int giros1 = Math.floorMod(nuevaOrientacion1, 4);
+      for (int i = 1; i <= giros1; i++)
       {
         world.turnRight();
       }
       world.moveForward(variables.get(v));
+    }
+  )
+}
+
+boolean conditions() :
+{
+  String o;
+  String v;
+  int n = 1;
+}
+{
+  (
+    < FACING_P > o = constant()
+    {
+      if (orientations.containsKey(o))
+      {
+        switch (o)
+        {
+          case ":north" : 
+          return world.facingNorth();
+          case ":south" : 
+          return world.facingSouth();
+          case ":east" : 
+          return world.facingEast();
+          case "west" : 
+          return world.facingWest();
+        }
+      }
+    }
+  )
+|
+  (
+    < CM > o = constant()
+    {
+      Point actualPosition = world.getPosition().getLocation();
+      int size = world.getN();
+      int newx = 1;
+      switch (o)
+      {
+        case ":north" : 
+        actualPosition.translate(0, - 1);
+        
+        newx = actualPosition.y;
+        if (newx > size
+      | newx < 1)
+        {
+          
+          return false;
+        }
+        else
+        {
+          
+          return !world.isBlocked(actualPosition);
+        }
+        case ":south" : 
+        actualPosition.translate(0, 1);
+        
+        newx = actualPosition.y;
+        if (newx > size
+      | newx < 1)
+        {
+          
+          return false;
+        }
+        else
+        {
+          
+          return !world.isBlocked(actualPosition);
+        }
+        case ":east" : 
+        actualPosition.translate(1, 0);
+        
+        newx = actualPosition.x;
+        if (newx > size
+      | newx < 1)
+        {
+          
+          return false;
+        }
+        else
+        {
+          
+          return !world.isBlocked(actualPosition);
+        }
+        case ":west" : 
+        actualPosition.translate(- 1, 0);
+        
+        newx = actualPosition.x;
+        if (newx > size
+      | newx < 1)
+        {
+          
+          return false;
+        }
+        else
+        {
+          
+          return !world.isBlocked(actualPosition);
+        }
+      }
     }
   )
 }
@@ -464,6 +683,14 @@ void moveface() :
 	 *  reconoce un numero entero sin signo
 	 * @return el valor entero correspondiente al valor reconocido
 	 */
+
+
+
+JAVACODE 
+boolean not()
+{
+  return !conditions();
+}
 
 int numero() throws Error :
 {	
@@ -497,7 +724,7 @@ String constant() throws Error :
   Token token;
 }
 {
-  (token = < CONSTANT >)+
+  (token = < CONSTANT >)
   {
     return token.image;
   }
@@ -513,7 +740,7 @@ String var() throws Error :
   Token token;
 }
 {
-  (token = < WORD >)+
+  (token = < WORD >)
   {
     return token.image;
   }
